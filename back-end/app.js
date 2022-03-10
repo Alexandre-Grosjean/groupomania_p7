@@ -6,6 +6,8 @@ const app = express();
 
 app.use(express.json());
 
+//routes
+const userRoutes = require('./routes/user.routes');
 
 // cors header
 app.use((req, res, next) => {
@@ -15,6 +17,8 @@ app.use((req, res, next) => {
   next();
 });
 
+// route for auth & profil
+app.use('/api/auth', userRoutes);
 
 //export to server
 
