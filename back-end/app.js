@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 
 
 const app = express();
@@ -8,6 +9,10 @@ app.use(express.json());
 
 //routes
 const userRoutes = require('./routes/user.routes');
+
+
+//multer directory
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // cors header
 app.use((req, res, next) => {

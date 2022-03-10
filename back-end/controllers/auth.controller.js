@@ -1,5 +1,7 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
+const upload = require('../middleware/multer-config');
+const { application } = require('express');
 
 //account creation
 
@@ -50,3 +52,10 @@ exports.login = async (req, res) => {
         return res.status(401).json({ error: 'something went wrong!' })
     }
 }
+
+//test post img
+
+// exports.test = async (req, res) => {
+//     console.log(req.file, req.body);
+
+// }
