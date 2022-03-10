@@ -1,7 +1,5 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
-const upload = require('../middleware/multer-config');
-const { application } = require('express');
 
 //account creation
 
@@ -12,12 +10,17 @@ exports.register = async (req, res) => {
 
     try {
         if (checkDB.length === 0) {
+
             const user = await User.create({ name, email, password: hashedPassword, isAdmin: true });
             return res.json({ message: "admin signed up" });
-        } else {
+
+        } else if (checkDB.length > 0) {
+
             const user = await User.create({ name, email, password: hashedPassword });
             return res.json({ messsage: "user signed up " });
+
         }
+
     } catch (err) {
         console.log(err)
         return res.status(500).json(err)
@@ -36,6 +39,7 @@ exports.login = async (req, res) => {
         const match = bcrypt.compareSync(password, user.password);
 
         if (user.active === true && match === true) {
+
             return res.status(200).json({
                 user: user.id,
                 uuid: user.uuid,
@@ -43,7 +47,22 @@ exports.login = async (req, res) => {
                 name: user.name,
                 admin: user.isAdmin
             });
+
+        } else if (user.active !== true && match === true) {
+            user.active = true;
+
+            await user.save()
+
+            return res.status(200).json({
+                user: user.id,
+                uuid: user.uuid,
+                email: user.email,
+                name: user.name,
+                admin: user.isAdmin
+            });
+
         } else {
+
             res.json({ message: "user can't log" })
         }
 
