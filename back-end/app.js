@@ -9,6 +9,7 @@ app.use(express.json());
 
 //routes
 const userRoutes = require('./routes/user.routes');
+const postRoutes = require('./routes/post.routes');
 
 
 //multer directory
@@ -24,6 +25,8 @@ app.use((req, res, next) => {
 
 // route for auth & profil
 app.use('/api/auth', userRoutes);
+//route for posts
+app.use('/api/posts', postRoutes);
 
 //export to server
 
