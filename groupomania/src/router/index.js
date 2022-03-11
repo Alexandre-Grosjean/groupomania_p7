@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
+import Posts from '../views/Posts.vue'
 import Profile from '../views/Profile.vue'
 import NotFound from '../views/NotFound.vue'
 
@@ -8,6 +9,11 @@ const routes = [
     path: '/',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/posts',
+    name: 'Posts',
+    component: Posts,
   },
   {
     path: '/profile',

@@ -50,8 +50,8 @@ export default createStore({
     },
     logout: function (state) {
       state.user = {
-          uuid: '',
-          token: ''
+        uuid: '',
+        token: ''
       }
       localStorage.removeItem('user');
     },
@@ -90,13 +90,13 @@ export default createStore({
     },
     desactivate: function (state) {
       state.user = {
-          uuid: '',
-          token: ''
+        uuid: '',
+        token: ''
       }
       localStorage.removeItem('user');
     },
+  },
+  module: {
+    
   }
 })
-modules: {
-
-}
