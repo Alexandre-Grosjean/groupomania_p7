@@ -73,10 +73,3 @@ exports.login = async (req, res) => {
         return res.status(500).json({ error: 'something went wrong!' })
     }
 }
-
-//test post img
-
-// exports.test = async (req, res) => {
-//     console.log(req.file, req.body);
-
-// }

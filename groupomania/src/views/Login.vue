@@ -80,9 +80,9 @@ export default {
     },
     ...mapState(["status"]),
   },
-  mounted: function () {
+  mounted: function async () {
     if (this.$store.state.user.uuid !== "") {
-      this.$router.push("/profile");
+              this.$router.push("/profile");
       return;
     }
   },
@@ -93,7 +93,7 @@ export default {
     switchToLogin: function () {
       this.mode = "login";
     },
-    loginAccount: function () {
+    loginAccount: async function () {
       const self = this;
       this.$store
         .dispatch("loginAccount", {
@@ -101,8 +101,10 @@ export default {
           password: this.password,
         })
         .then(
-          function () {
-            self.$router.push("Profile");
+          function async() {
+            setTimeout(() => {
+              self.$router.push("/profile");
+            }, 1000);
           },
           function (error) {
             console.log(error);

@@ -57,7 +57,7 @@ export default createStore({
     },
   },
   actions: {
-    loginAccount: ({ commit }, userInfos) => {
+    loginAccount: async ({ commit }, userInfos) => {
       commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {
         instance.post('/auth/login', userInfos)
@@ -88,7 +88,13 @@ export default createStore({
           });
       });
     },
-    
+    desactivate: function (state) {
+      state.user = {
+          uuid: '',
+          token: ''
+      }
+      localStorage.removeItem('user');
+    },
   }
 })
 modules: {
