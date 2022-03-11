@@ -9,7 +9,7 @@ router.post('/register', authCtrl.register);
 // login
 router.post('/login', authCtrl.login);
 // user profil
-router.get('/profil', userCtrl.profil);
+router.post('/profil/', userCtrl.profil);
 // update profil
 router.put('/updateProfil/users/:uuid', upload.single('imageProfil'), userCtrl.updateProfil);
 //desactivation account

@@ -11,13 +11,13 @@ exports.register = async (req, res) => {
     try {
         if (checkDB.length === 0) {
 
-            const user = await User.create({ name, email, password: hashedPassword, isAdmin: true });
-            return res.json({ message: "admin signed up" });
+            await User.create({ name, email, password: hashedPassword, isAdmin: true });
+            return res.status(201).json({ message: "admin signed up" });
 
         } else if (checkDB.length > 0) {
 
-            const user = await User.create({ name, email, password: hashedPassword });
-            return res.json({ messsage: "user signed up " });
+            await User.create({ name, email, password: hashedPassword });
+            return res.status(201).json({ messsage: "user signed up " });
 
         }
 
@@ -41,11 +41,12 @@ exports.login = async (req, res) => {
         if (user.active === true && match === true) {
 
             return res.status(200).json({
-                user: user.id,
                 uuid: user.uuid,
                 email: user.email,
+                token: 'je suis un token',
                 name: user.name,
-                admin: user.isAdmin
+                imageUrl: user.imageUrl,
+                isAdmin: user.isAdmin
             });
 
         } else if (user.active !== true && match === true) {
@@ -54,21 +55,22 @@ exports.login = async (req, res) => {
             await user.save()
 
             return res.status(200).json({
-                user: user.id,
                 uuid: user.uuid,
                 email: user.email,
+                token: 'je suis un token',
                 name: user.name,
-                admin: user.isAdmin
+                imageUrl: user.imageUrl,
+                isAdmin: user.isAdmin
             });
 
         } else {
 
-            res.json({ message: "user can't log" })
+            res.status(401).json({ message: "user can't log" })
         }
 
     } catch (err) {
         console.log(err);
-        return res.status(401).json({ error: 'something went wrong!' })
+        return res.status(500).json({ error: 'something went wrong!' })
     }
 }
 
