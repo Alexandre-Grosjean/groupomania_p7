@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div>
+      <p @click="goToPosts">return</p>
+    </div>
     <h1>info profile</h1>
     <p v-if="mode == 'profile'" @click="switchToUpdateProfile()">🖋️</p>
     <div v-if="mode == 'profile'">
@@ -19,6 +22,7 @@
       <img class="image_profil" :src="image" />
     </div>
     <div v-if="mode == 'updateProfile'">
+      <p class="alert_condition">votre profil sera mis à jour à votre prochaine connexion</p>
       <button
         @click="validateUpdateProfile"
         :class="{ buttonGrise: !validatedfields }"
@@ -75,6 +79,9 @@ export default {
     ...mapState(["userInfos"]),
   },
   methods: {
+    goToPosts: function() {
+      this.$router.push("/posts");
+    },
     switchToUpdateProfile: function () {
       this.mode = "updateProfile";
     },
@@ -107,11 +114,8 @@ export default {
           formData
         )
         .then((res) => {
-          console.log(res);
-          document.location.reload();
-          setTimeout(() => {
-            document.location.reload();
-          }, 1000);
+          this.mode = "profile";
+          console.log(res)
         })
         .catch((err) => console.log(err));
     },

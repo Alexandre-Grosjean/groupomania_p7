@@ -82,7 +82,7 @@ export default {
   },
   mounted: function async () {
     if (this.$store.state.user.uuid !== "") {
-              this.$router.push("/profile");
+              this.$router.push("/posts");
       return;
     }
   },
@@ -102,9 +102,7 @@ export default {
         })
         .then(
           function async() {
-            setTimeout(() => {
-              self.$router.push("/profile");
-            }, 1000);
+              self.$router.push("/posts");
           },
           function (error) {
             console.log(error);
