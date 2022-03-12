@@ -1,5 +1,4 @@
-const { sequelize, User, Post, Likes, Comment } = require('../models');
-const postCtrl = require('../controllers/post.controller');
+const { User, Post } = require('../models');
 const fs = require('fs');
 
 //create a post

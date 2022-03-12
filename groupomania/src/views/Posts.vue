@@ -31,7 +31,7 @@
       v-for="post in posts.slice().reverse()"
       :key="post.uuid"
     >
-      <div>
+      <div v-if="mode =='view'">
         <button @click="deletePost(post)">delete post</button>
       </div>
       <div class="posts-user-box">
@@ -53,7 +53,6 @@
 
 <script>
 const axios = require("axios");
-
 const instance = axios.create({
   baseURL: "http://localhost:5000/api/",
 });

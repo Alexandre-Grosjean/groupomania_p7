@@ -10,6 +10,7 @@ app.use(express.json());
 //routes
 const userRoutes = require('./routes/user.routes');
 const postRoutes = require('./routes/post.routes');
+const likeRoutes = require('./routes/like.routes');
 
 
 //multer directory
@@ -27,6 +28,8 @@ app.use((req, res, next) => {
 app.use('/api/auth', userRoutes);
 //route for posts
 app.use('/api/posts', postRoutes);
+//route for likes
+app.use('/api/likes', likeRoutes);
 
 //export to server
 
