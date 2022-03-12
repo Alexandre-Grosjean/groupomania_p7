@@ -4,20 +4,11 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Likes extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-     static associate({ User }) {
-      // define association here
-      //userId
-      this.belongsTo(User, { foreignKey: 'userId', as: 'user' })
+
+    static associate({ Post }) {
+      this.belongsTo(Post, { foreignKey: 'postId', as: 'post', onDelete: 'CASCADE'})
     }
 
-    toJSON(){
-      return { ...this.get(), id: undefined, userId: undefined }
-    }
   }
   Likes.init({
     uuid: {
@@ -32,10 +23,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: 0
     },
-    postId: {
+    userUuid: {
       allowNull: false,
       type: DataTypes.STRING
-    }
+    },
+    postUuid: {
+      allowNull: false,
+      type: DataTypes.STRING
+    },
   }, {
     sequelize,
     tableName: 'likes',

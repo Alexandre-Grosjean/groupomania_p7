@@ -12,13 +12,17 @@ module.exports = {
         type: DataTypes.STRING,
         defaultValue: DataTypes.UUIDV4
       },
-      postId: {
+      postUuid: {
         allowNull: false,
         type: DataTypes.STRING
       },
-      userId: {
+      userUuid: {
         allowNull: false,
-        type: DataTypes.INTEGER
+        type: DataTypes.STRING
+      },
+      postId: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
       },
       userLike: {
         allowNull: false,

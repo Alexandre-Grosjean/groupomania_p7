@@ -1,4 +1,4 @@
-const { sequelize, User, Post, Likes, Comment } = require('../models');
+const {  User, Post, Likes } = require('../models');
 
 //create like & dislike
 exports.createLike = async (req, res) => {
@@ -10,10 +10,14 @@ exports.createLike = async (req, res) => {
             where: { uuid: userUuid }
         });
 
+        const posts = await Post.findOne({
+            where: { uuid: post }
+        });
+
         const checkLike = await Likes.findOne({
             where: {
-                postId: post,
-                userId: user.dataValues.id
+                postUuid: post,
+                userUuid: userUuid
             }
         });
 
@@ -22,8 +26,9 @@ exports.createLike = async (req, res) => {
             const likes = await Likes.create({
                 userLike: like,
                 userDislike: dislike,
-                postId: post,
-                userId: user.id
+                postUuid: post,
+                userUuid: userUuid,
+                postId: posts.id
             });
 
             if (likes.userLike === true) {
@@ -37,12 +42,12 @@ exports.createLike = async (req, res) => {
 
             await Likes.destroy({
                 where: {
-                    postId: post,
-                    userId: user.id
+                    postUuid: post,
+                    userUuid: userUuid
                 }
             });
 
-            return res.status(400).json({ message: "choice has been deleted" });
+            return res.status(200).json({ message: "choice has been deleted" });
         }
 
     } catch (err) {
@@ -59,13 +64,13 @@ exports.getLikeOnePost = async (req, res) => {
     try {
         const likes = await Likes.findAll({
             where: {
-                postId: post,
+                postUuid: post,
                 userLike: true
-            }
+            },
         });
 
         console.log(likes.length);
-        return res.json(likes.length);
+        return res.status(200).json([likes]);
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: 'something went wrong!' })
@@ -80,9 +85,10 @@ exports.getDislikeOnePost = async (req, res) => {
     try {
         const dislikes = await Likes.findAll({
             where: {
-                postId: post,
+                postUuid: post,
                 userDislike: true
-            }
+            },
+            include: ['post']
         });
 
         console.log(dislikes.length);

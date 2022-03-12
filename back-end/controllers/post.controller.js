@@ -1,5 +1,6 @@
-const { User, Post } = require('../models');
+const { User, Post, Likes } = require('../models');
 const fs = require('fs');
+const likes = require('../models/likes');
 
 //create a post
 exports.createPost = async (req, res) => {
@@ -30,11 +31,11 @@ exports.createPost = async (req, res) => {
 //get all posts
 exports.getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.findAll({
-            include: ['user']
+        const post = await Post.findAll({
+            include: ['user','likes']
         });
 
-        return res.json(posts);
+        return res.status(200).json(post);
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: 'something went wrong!' })
@@ -48,17 +49,17 @@ exports.deletePost = async (req, res) => {
 
     try {
 
+        
+        const user = await User.findOne({
+            where: { email }
+        });
+        
         const post = await Post.findOne({
             where: {
                 uuid
             },
             include: ['user']
         });
-
-        const user = await User.findOne({
-            where: { email }
-        });
-        
         if (user.uuid == post.user.uuid) {
 
 

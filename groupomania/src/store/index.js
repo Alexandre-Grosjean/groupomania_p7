@@ -14,6 +14,7 @@ if (!user) {
 } else {
   try {
     user = JSON.parse(user);
+    instance.defaults.headers.common['Authorization'] = user.token;
   } catch (ex) {
     user = {
       uuid: '',
@@ -42,6 +43,7 @@ export default createStore({
       state.status = status;
     },
     logUser: function (state, user) {
+      instance.defaults.headers.common['Authorization'] = user.token;
       localStorage.setItem('user', JSON.stringify(user))
       state.user = user;
     },
@@ -57,6 +59,7 @@ export default createStore({
     },
   },
   actions: {
+    
     loginAccount: async ({ commit }, userInfos) => {
       commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {

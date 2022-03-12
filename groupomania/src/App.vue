@@ -1,9 +1,24 @@
 <template>
   <div>
+    <div class="logo">
+      <img
+        class="logo-entreprise"
+        src="./assets/icon-left-font-monochrome-black.png"
+        alt="logo entreprise"
+      />
+    </div>
     <router-view />
   </div>
 </template>
 
 <style>
+
+.logo {
+  display: flex;
+  justify-content: center;
+}
+.logo-entreprise {
+  height: 100px;
+}
 
 </style>

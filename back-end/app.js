@@ -1,17 +1,29 @@
 const express = require('express');
 const path = require('path');
 
-
 const app = express();
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require("express-rate-limit");
 
-
+app.use(cors());
 app.use(express.json());
+app.use(helmet(
+  { crossOriginResourcePolicy: false, }
+));
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+
+app.use(limiter);
+
 
 //routes
 const userRoutes = require('./routes/user.routes');
 const postRoutes = require('./routes/post.routes');
 const likeRoutes = require('./routes/like.routes');
-
 
 //multer directory
 app.use('/images', express.static(path.join(__dirname, 'images')));
