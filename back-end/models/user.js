@@ -6,9 +6,9 @@ module.exports = (sequelize, DataTypes) => {
   class User extends Model {
 
      static associate({ Post }) {
-      this.hasMany(Post, { foreignKey: 'userId', as: 'posts' })
+      this.hasMany(Post, { foreignKey: 'userId', as: 'user' })
     }
-    
+        
     toJSON() {
       return { ...this.get(), id: undefined }
     }

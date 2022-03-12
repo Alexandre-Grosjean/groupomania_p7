@@ -1,5 +1,6 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 //account creation
 
@@ -43,10 +44,14 @@ exports.login = async (req, res) => {
             return res.status(200).json({
                 uuid: user.uuid,
                 email: user.email,
-                token: 'je suis un token',
                 name: user.name,
                 imageUrl: user.imageUrl,
-                isAdmin: user.isAdmin
+                isAdmin: user.isAdmin,
+                token: jwt.sign(
+                    {user: user.id},
+                    'ceci_est_mon_token_ultra_secret',
+                    { expiresIn: '12h' }
+                )
             });
 
         } else if (user.active !== true && match === true) {

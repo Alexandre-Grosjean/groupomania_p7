@@ -25,13 +25,12 @@
         <button @click="switchToCancelCreatePost">annuler</button>
       </div>
     </div>
-    <button @click="getAllposts">test</button>
     <div
       class="posts-box"
       v-for="post in posts.slice().reverse()"
       :key="post.uuid"
     >
-      <div>
+      <div v-if="mode == 'view'">
         <button @click="deletePost(post)">delete post</button>
       </div>
       <div class="posts-user-box">
@@ -47,13 +46,18 @@
       <div class="posts-body-text">
         <p>{{ post.body }}</p>
       </div>
+      <div class="posts-likes-box">
+        <p>{{ likes }}</p>
+        <button @click="chooseLike(post)">👍</button>
+        <p>{{ dislikes }}</p>
+        <button @click="chooseDislike(post)">👎</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 const axios = require("axios");
-
 const instance = axios.create({
   baseURL: "http://localhost:5000/api/",
 });
@@ -73,8 +77,54 @@ export default {
       post: [],
       newPost: null,
       newImage: null,
+      likes: 0,
+      dislikes: 0,
     };
   },
+
+  created: async function () {
+    await instance
+      .get("/posts/")
+      .then((res) => {
+        this.posts = res.data;
+      })
+      .catch((err) => console.log(err));
+
+        let data = JSON.parse(localStorage.getItem('user'))
+        console.log(data.email)
+
+    await instance
+      .get("/auth/myprofile", {email: data.email})
+      .then((res) => {
+        this.user = data.name;
+        this.image = data.imageUrl;
+        this.email = data.email;
+        this.admin = data.name;
+      })
+      .catch((err) => console.log(err));
+
+      
+  },
+
+
+  test: async function () {
+    console.log('test')
+  },
+
+  // updateLike: async function (post) {
+  //   this.post = post;
+  //   try {
+  //     const allLikes = await instance.get(`/likes/posts/${this.post.uuid}`);
+  //     const allDislikes = await instance.get(
+  //       `/likes/dislikes/posts/${this.post.uuid}`
+  //     );
+
+  //     this.likes = allLikes.data;
+  //     this.dislikes = allDislikes.data;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // },
   mounted: function () {
     if (this.$store.state.user.uuid == "") {
       this.$router.push("/");
@@ -82,6 +132,21 @@ export default {
     }
   },
   computed: {
+    // likeAndDislikeChoice: async function (post) {
+    //   this.post = post;
+    //   try {
+    //     const allLikes = await instance.get(`/likes/posts/${this.post.uuid}`);
+    //     const allDislikes = await instance.get(
+    //       `/likes/dislikes/posts/${this.post.uuid}`
+    //     );
+
+    //     this.likes = allLikes.data;
+    //     this.dislikes = allDislikes.data;
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // },
+
     validatedfields: function () {
       if (this.mode == "create") {
         if (this.newPost != null) {
@@ -94,14 +159,7 @@ export default {
     ...mapState(["userInfos"]),
   },
   methods: {
-    getAllposts: async function () {
-      try {
-        const res = await instance.get("/posts/");
-        this.posts = res.data;
-      } catch (error) {
-        console.log(error);
-      }
-    },
+
     goToProfile: function () {
       this.$router.push("/profile");
     },
@@ -136,6 +194,51 @@ export default {
           console.log(res);
         })
         .catch((err) => console.log(err));
+    },
+
+    chooseLike: async function (post) {
+      this.post = post;
+      let data = {
+        userUuid: this.$store.state.userInfos.uuid,
+        like: true,
+        dislike: false,
+      };
+      await instance
+        .post(`/likes/posts/${this.post.uuid}`, data)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => console.log(err));
+    },
+    chooseDislike: async function (post) {
+      this.post = post;
+      let data = {
+        userUuid: this.$store.state.userInfos.uuid,
+        like: true,
+        dislike: false,
+      };
+      await instance
+        .post(`/likes/posts/${this.post.uuid}`, data)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => console.log(err));
+    },
+    updateLike: async function (post) {
+      this.post = post;
+      await instance
+        .get(`/likes/posts/${this.post.uuid}`)
+        .then((res) => {
+          this.likes = res.length;
+        })
+        .catch((err) => console.log(err));
+      // await instance.get(
+      //   `/likes/dislikes/posts/${this.post.uuid}`
+      // ).then((res) => {
+      //   console.log(res);
+      //   this.dislikes = res.length
+      // })
+      // .catch((err) => console.log(err));
     },
   },
 };

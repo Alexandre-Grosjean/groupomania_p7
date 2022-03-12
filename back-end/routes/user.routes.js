@@ -8,7 +8,9 @@ const upload = require('../middleware/multer-config');
 router.post('/register', authCtrl.register);
 // login
 router.post('/login', authCtrl.login);
-// user profil
+//get profil
+router.get('/myprofil/users/:uuid', userCtrl.myprofil);
+// change profil
 router.post('/profil/', userCtrl.profil);
 // update profil
 router.put('/updateProfil/users/:uuid', upload.single('imageProfil'), userCtrl.updateProfil);

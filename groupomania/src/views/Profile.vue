@@ -96,7 +96,7 @@ export default {
     desactivate: function () {
       localStorage.removeItem("user");
       instance.put(
-        `http://localhost:5000/api/auth/desactivate/users/${this.$store.state.userInfos.uuid}`
+        `/auth/desactivate/users/${this.$store.state.userInfos.uuid}`
       );
       const self = this;
       self.$router.push("/");
@@ -105,12 +105,13 @@ export default {
       this.imageProfil = this.$refs.file.files[0];
     },
     validateUpdateProfile: function () {
+      
       const formData = new FormData();
       formData.append("imageProfil", this.imageProfil);
       formData.append("name", this.name);
       instance
         .put(
-          `http://localhost:5000/api/auth/updateProfil/users/${this.$store.state.userInfos.uuid}`,
+          `/auth/updateProfil/users/${this.$store.state.userInfos.uuid}`,
           formData
         )
         .then((res) => {
@@ -118,6 +119,7 @@ export default {
           console.log(res)
         })
         .catch((err) => console.log(err));
+      
     },
   },
 };
