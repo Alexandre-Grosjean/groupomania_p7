@@ -42,11 +42,7 @@ exports.login = async (req, res) => {
         if (user.active === true && match === true) {
 
             return res.status(200).json({
-                uuid: user.uuid,
-                email: user.email,
-                name: user.name,
-                imageUrl: user.imageUrl,
-                isAdmin: user.isAdmin,
+                userId: user.id,
                 token: jwt.sign(
                     {user: user.id},
                     'ceci_est_mon_token_ultra_secret',
@@ -60,12 +56,12 @@ exports.login = async (req, res) => {
             await user.save()
 
             return res.status(200).json({
-                uuid: user.uuid,
-                email: user.email,
-                token: 'je suis un token',
-                name: user.name,
-                imageUrl: user.imageUrl,
-                isAdmin: user.isAdmin
+                userId: user.id,
+                token: jwt.sign(
+                    {user: user.id},
+                    'ceci_est_mon_token_ultra_secret',
+                    { expiresIn: '12h' }
+                )
             });
 
         } else {

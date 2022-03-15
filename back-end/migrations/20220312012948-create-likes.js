@@ -16,7 +16,7 @@ module.exports = {
         allowNull: false,
         type: DataTypes.STRING
       },
-      userUuid: {
+      userId: {
         allowNull: false,
         type: DataTypes.STRING
       },

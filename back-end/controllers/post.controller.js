@@ -4,12 +4,12 @@ const likes = require('../models/likes');
 
 //create a post
 exports.createPost = async (req, res) => {
-    const { userUuid, body } = req.body;
+    const { userId, body } = req.body;
     const imagePosts = req.file;
 
     try {
         const user = await User.findOne({
-            where: { uuid: userUuid }
+            where: { id: userId }
         });
 
         if (imagePosts) {
@@ -32,6 +32,7 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts = async (req, res) => {
     try {
         const post = await Post.findAll({
+            where: { user: isActive === true },
             include: ['user','likes']
         });
 
@@ -45,13 +46,13 @@ exports.getAllPosts = async (req, res) => {
 // delete one post
 exports.deletePost = async (req, res) => {
     const uuid = req.params.uuid;
-    const { email } = req.body;
+    const { userId } = req.body;
 
     try {
 
         
         const user = await User.findOne({
-            where: { email }
+            where: { id: userId }
         });
         
         const post = await Post.findOne({

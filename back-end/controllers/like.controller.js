@@ -2,12 +2,12 @@ const {  User, Post, Likes } = require('../models');
 
 //create like & dislike
 exports.createLike = async (req, res) => {
-    const { userUuid, like, dislike } = req.body;
+    const { userId, like, dislike } = req.body;
     const post = req.params.uuid;
 
     try {
         const user = await User.findOne({
-            where: { uuid: userUuid }
+            where: { id: userId }
         });
 
         const posts = await Post.findOne({
@@ -17,7 +17,7 @@ exports.createLike = async (req, res) => {
         const checkLike = await Likes.findOne({
             where: {
                 postUuid: post,
-                userUuid: userUuid
+                userId: userId
             }
         });
 
@@ -27,7 +27,7 @@ exports.createLike = async (req, res) => {
                 userLike: like,
                 userDislike: dislike,
                 postUuid: post,
-                userUuid: userUuid,
+                userId: userId,
                 postId: posts.id
             });
 
@@ -43,7 +43,7 @@ exports.createLike = async (req, res) => {
             await Likes.destroy({
                 where: {
                     postUuid: post,
-                    userUuid: userUuid
+                    userId: userId
                 }
             });
 
@@ -70,7 +70,7 @@ exports.getLikeOnePost = async (req, res) => {
         });
 
         console.log(likes.length);
-        return res.status(200).json([likes]);
+        return res.status(200).json(likes.length);
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: 'something went wrong!' })
