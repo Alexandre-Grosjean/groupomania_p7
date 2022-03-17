@@ -131,7 +131,7 @@ export default {
       this.$store
         .dispatch("setUser", dataForm)
         .then(
-          function async() {
+          function async () {
               self.$router.push("/posts");
           },
           function (error) {

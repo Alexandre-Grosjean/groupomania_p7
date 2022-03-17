@@ -32,7 +32,6 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts = async (req, res) => {
     try {
         const post = await Post.findAll({
-            where: { user: isActive === true },
             include: ['user','likes']
         });
 

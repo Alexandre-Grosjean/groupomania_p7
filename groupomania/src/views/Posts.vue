@@ -2,12 +2,12 @@
   <div>
     <!-- go to profils -->
     <div>
-      <p @click="goToProfile">👨‍💻</p>
+      <button @click="goToProfile">👨‍💻</button>
     </div>
-  
+
     <!-- post creation -->
     <div>
-      <p @click="switchToCreatePost">➕</p>
+      <button @click="switchToCreatePost">➕</button>
       <div v-if="mode == 'create'">
         <textarea
           v-model="newPost"
@@ -33,7 +33,7 @@
       :key="post.uuid"
     >
       <div v-if="mode == 'view'">
-        <p @click="deletePost(post)">🗑️</p>
+        <button @click="deletePost(post)">🗑️</button>
       </div>
       <div class="posts-user-box">
         <img class="img-profil" :src="post.user.imageUrl" alt="img-Profil" />
@@ -49,9 +49,15 @@
         <p>{{ post.body }}</p>
       </div>
       <div class="posts-likes-box">
-        <p>{{  }}</p>
+        <div v-if="post.likes !== [] && allLikes">
+          <p class="hide-p">{{ calculateLikes(post) }}</p>
+          <p>{{ likes }}</p>
+          <p class="hide-p">{{ calculateDislikes(post) }}</p>
+          <p>{{ dislikes }}</p>
+        </div>
+      </div>
+      <div>
         <button @click="chooseLike(post)">👍</button>
-        <p>{{  }}</p>
         <button @click="chooseDislike(post)">👎</button>
       </div>
     </div>
@@ -59,7 +65,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from "vuex";
 
 const axios = require("axios");
 const instance = axios.create({
@@ -75,6 +81,10 @@ export default {
       post: [],
       newPost: null,
       newImage: null,
+      allLike: [],
+      allDislike: [],
+      likes: 0,
+      dislikes: 0,
     };
   },
 
@@ -87,14 +97,46 @@ export default {
       .catch((err) => console.log(err));
   },
 
-    mounted: function async () {
+  mounted: function async() {
     if (this.$store.state.user.userId == -1) {
-              this.$router.push("/");
+      this.$router.push("/");
       return;
     }
   },
 
   computed: {
+    allLikes: async function () {
+      let i;
+      let a;
+      let b;
+      let c;
+      let arrayLikes = [];
+      let arrayDislikes = [];
+      let allLikes = [];
+      let allDislikes = [];
+      for (i = 0; i < this.posts.length; i++) {
+        for (a = 0; a < this.posts[i].likes.length; a++) {
+          if (this.posts[i].likes[a].userLike == true) {
+            arrayLikes.push(this.posts[i].uuid);
+          }
+
+          if (this.posts[i].likes[a].userDislike == true) {
+            arrayDislikes.push(this.posts[i].uuid);
+          }
+        }
+      }
+
+      for (b = 0; b < arrayLikes.length; b++) {
+        arrayLikes[b];
+        allLikes.push(arrayLikes[b]);
+      }
+      for (c = 0; c < arrayDislikes.length; c++) {
+        arrayDislikes[c];
+        allDislikes.push(arrayDislikes[c]);
+      }
+      this.allLike = allLikes;
+      this.allDislike = allDislikes;
+    },
     validatedfields: function () {
       if (this.mode == "create") {
         if (this.newPost != null) {
@@ -104,7 +146,7 @@ export default {
         }
       }
     },
-    ...mapGetters({ user: 'getUser'})
+    ...mapGetters({ user: "getUser" }),
   },
 
   methods: {
@@ -147,6 +189,26 @@ export default {
         })
         .catch((err) => console.log(err));
     },
+    calculateLikes: async function (post) {
+      let result = 0;
+      let i;
+      for (i = 0; i < this.allLike.length; i++) {
+        if (post.uuid == this.allLike[i]) {
+          result++;
+        }
+      }
+      this.likes = result;
+    },
+    calculateDislikes: async function (post) {
+      let result = 0;
+      let i;
+      for (i = 0; i < this.allDislike.length; i++) {
+        if (post.uuid == this.allDislike[i]) {
+          result++;
+        }
+      }
+      this.dislikes = result;
+    },
     chooseLike: async function (post) {
       this.post = post;
       let data = {
@@ -157,8 +219,8 @@ export default {
       await instance
         .post(`/likes/posts/${this.post.uuid}`, data)
         .then((res) => {
-          console.dir(post);
           console.log(res);
+          document.location.reload();
         })
         .catch((err) => console.log(err));
     },
@@ -173,6 +235,7 @@ export default {
         .post(`/likes/posts/${this.post.uuid}`, data)
         .then((res) => {
           console.log(res);
+          document.location.reload();
         })
         .catch((err) => console.log(err));
     },
@@ -181,6 +244,10 @@ export default {
 </script>
 
 <style>
+.hide-p {
+  display: none;
+}
+
 .buttonGrise {
   opacity: 0.5;
 }
