@@ -1,11 +1,11 @@
 const { User } = require('../models');
 const fs = require('fs');
 
-exports.myprofil = async (req, res) => {
-    const uuid = req.params.uuid;
+exports.myProfil = async (req, res) => {
+    const userId = req.body.userId
     try {
         const user = await User.findOne({
-            where: { uuid }
+            where: { id: userId }
         });
 
         return res.status(200).json(user)

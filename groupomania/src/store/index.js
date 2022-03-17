@@ -1,105 +1,66 @@
 import { createStore } from 'vuex'
-const axios = require('axios')
+const axios = require("axios");
 
 const instance = axios.create({
-  baseURL: 'http://localhost:5000/api/'
+  baseURL: "http://localhost:5000/api/",
 });
 
-let user = localStorage.getItem('user');
-if (!user) {
-  user = {
-    uuid: '',
-    token: ''
-  };
-} else {
+let localUser = localStorage.getItem('user')
+if (!localUser) {
+  localUser = {
+    userId: -1,
+    token: ""
+  }
+} 
+else {
   try {
-    user = JSON.parse(user);
-    instance.defaults.headers.common['Authorization'] = user.token;
+    localUser = JSON.parse(localUser)
+    // instance.defaults.headers.common['Authorization'] = `Bearer ${localUser.token}`
+    console.log('token hors mutation' + ' _____ ' + localUser.token)
   } catch (ex) {
-    user = {
-      uuid: '',
-      token: ''
-    };
+    localUser = {
+      userId: -1,
+      token: ""
+    }
   }
 }
 
 export default createStore({
   state: {
-    status: '',
-    user: user,
-    userInfos: {
-      name: '',
-      email: '',
-      uuid: '',
-      imageUrl: '',
-      isAdmin: '',
-    },
+    user: localUser
   },
   getters: {
-
+    getUser: state => state.user
   },
   mutations: {
-    setStatus: function (state, status) {
-      state.status = status;
-    },
-    logUser: function (state, user) {
-      instance.defaults.headers.common['Authorization'] = user.token;
-      localStorage.setItem('user', JSON.stringify(user))
-      state.user = user;
-    },
-    userInfos: function (state, userInfos) {
-      state.userInfos = userInfos;
+    updateUser(state, payload) {
+      state.user = payload
+      // console.log(` ${state.user.token}`)
+      // instance.defaults.headers.common['Authorization'] = `Bearer ${state.user.token}`
+      localStorage.setItem('user', JSON.stringify(payload))
     },
     logout: function (state) {
       state.user = {
-        uuid: '',
+        userId: -1,
         token: ''
       }
       localStorage.removeItem('user');
     },
   },
   actions: {
-    
-    loginAccount: async ({ commit }, userInfos) => {
-      commit('setStatus', 'loading');
+    setUser: ({ commit }, user) => {
       return new Promise((resolve, reject) => {
-        instance.post('/auth/login', userInfos)
-          .then(function (response) {
-            commit('logUser', response.data);
-            commit('userInfos', response.data);
-            commit('setStatus', 'logged');
-            resolve(response);
+        instance.post('/auth/login', user)
+          .then( async function (res) {
+            commit('updateUser', res.data);
+            resolve(res);
           })
-          .catch(function (error) {
-            commit('setStatus', 'error_login');
-            reject(error);
+          .catch(function (err) {
+            reject(err);
           });
       });
-    },
-    createAccount: ({ commit }, userInfos) => {
-      commit('setStatus', 'loading');
-      return new Promise((resolve, reject) => {
-        commit;
-        instance.post('/auth/register', userInfos)
-          .then(function (response) {
-            commit('setStatus', 'created');
-            resolve(response);
-          })
-          .catch(function (error) {
-            commit('setStatus', 'error_create');
-            reject(error);
-          });
-      });
-    },
-    desactivate: function (state) {
-      state.user = {
-        uuid: '',
-        token: ''
-      }
-      localStorage.removeItem('user');
-    },
-  },
-  module: {
-    
+      },
+},
+  modules: {
   }
 })

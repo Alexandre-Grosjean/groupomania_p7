@@ -6,23 +6,22 @@
     <h1>info profile</h1>
     <p v-if="mode == 'profile'" @click="switchToUpdateProfile()">🖋️</p>
     <div v-if="mode == 'profile'">
-      <p>{{ user }}</p>
+      <p>{{ this.userInfos.name }}</p>
     </div>
     <div v-else>
-      <p>{{ user }}</p>
+      <p>{{ this.userInfos.name }}</p>
       <input v-model="name" type="text" placeholder="quel sera ton choix ?" />
       <p class="alert_condition">ecrire ou modifier pour valider changement</p>
     </div>
-    <p>{{ email }}</p>
-    <p v-if="admin === true">admin</p>
+    <p>{{ this.userInfos.email }}</p>
+    <p v-if="this.userInfos.isAdmin === true">admin</p>
     <div v-if="mode == 'updateProfile'">
       <input type="file" name="imageProfil" ref="file" @change="onFileChange" />
     </div>
     <div>
-      <img class="image_profil" :src="image" />
+      <img class="image_profil" :src="this.userInfos.imageUrl" />
     </div>
     <div v-if="mode == 'updateProfile'">
-      <p class="alert_condition">votre profil sera mis à jour à votre prochaine connexion</p>
       <button
         @click="validateUpdateProfile"
         :class="{ buttonGrise: !validatedfields }"
@@ -39,29 +38,33 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 const axios = require("axios");
 
 const instance = axios.create({
   baseURL: "http://localhost:5000/api/",
 });
-
-import { mapState } from "vuex";
+instance.defaults.timeout = 2500;
 
 export default {
-  name: "Profile",
   data: function () {
     return {
       mode: "profile",
+      userInfos: "",
       name: "",
-      imageProfil: "",
-      user: this.$store.state.userInfos.name,
-      email: this.$store.state.userInfos.email,
-      image: this.$store.state.userInfos.imageUrl,
-      admin: this.$store.state.userInfos.isAdmin,
     };
   },
-  mounted: function () {
-    if (this.$store.state.user.uuid == "") {
+  created: async function () {
+    await instance
+      .post("/auth/profil", { userId: this.user.userId })
+      .then((res) => {
+        this.userInfos = res.data;
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  },
+  mounted: function async() {
+    if (this.$store.state.user.userId == -1) {
       this.$router.push("/");
       return;
     }
@@ -76,10 +79,10 @@ export default {
         }
       }
     },
-    ...mapState(["userInfos"]),
+    ...mapGetters({ user: "getUser" }),
   },
   methods: {
-    goToPosts: function() {
+    goToPosts: function () {
       this.$router.push("/posts");
     },
     switchToUpdateProfile: function () {
@@ -89,37 +92,33 @@ export default {
       this.mode = "profile";
     },
     disconnect: function () {
-      const self = this;
       this.$store.commit("logout");
-      self.$router.push("/");
+      document.location.reload();
     },
     desactivate: function () {
-      localStorage.removeItem("user");
-      instance.put(
-        `/auth/desactivate/users/${this.$store.state.userInfos.uuid}`
-      );
-      const self = this;
-      self.$router.push("/");
+      instance
+        .put(`/auth/desactivate/users/${this.userInfos.uuid}`)
+        .then((res) => {
+          this.$store.commit("logout");
+          console.log(res);
+          document.location.reload();
+        });
     },
     onFileChange() {
       this.imageProfil = this.$refs.file.files[0];
     },
+
     validateUpdateProfile: function () {
-      
       const formData = new FormData();
       formData.append("imageProfil", this.imageProfil);
       formData.append("name", this.name);
       instance
-        .put(
-          `/auth/updateProfil/users/${this.$store.state.userInfos.uuid}`,
-          formData
-        )
+        .put(`/auth/updateProfil/users/${this.userInfos.uuid}`, formData)
         .then((res) => {
           this.mode = "profile";
-          console.log(res)
+          console.log(res);
         })
         .catch((err) => console.log(err));
-      
     },
   },
 };

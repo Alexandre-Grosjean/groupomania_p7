@@ -1,15 +1,15 @@
 <template>
   <div>
-    <div @click="goToProfile" class="goToProfile">
-      <p>
-        bonjour <span>{{ user }}</span>
-      </p>
-      <img class="img-profil" :src="image" />
-    </div>
+    <!-- go to profils -->
     <div>
-      <p @click="switchToCreatePost">create</p>
+      <button @click="goToProfile">👨‍💻</button>
+    </div>
+
+    <!-- post creation -->
+    <div>
+      <button @click="switchToCreatePost">➕</button>
       <div v-if="mode == 'create'">
-        <input
+        <textarea
           v-model="newPost"
           type="text"
           placeholder="quel sera ton message"
@@ -25,13 +25,15 @@
         <button @click="switchToCancelCreatePost">annuler</button>
       </div>
     </div>
+
+    <!-- list of posts -->
     <div
       class="posts-box"
       v-for="post in posts.slice().reverse()"
       :key="post.uuid"
     >
       <div v-if="mode == 'view'">
-        <button @click="deletePost(post)">delete post</button>
+        <button @click="deletePost(post)">🗑️</button>
       </div>
       <div class="posts-user-box">
         <img class="img-profil" :src="post.user.imageUrl" alt="img-Profil" />
@@ -47,9 +49,15 @@
         <p>{{ post.body }}</p>
       </div>
       <div class="posts-likes-box">
-        <p>{{ likes }}</p>
+        <div v-if="post.likes !== [] && allLikes">
+          <p class="hide-p">{{ calculateLikes(post) }}</p>
+          <p>{{ likes }}</p>
+          <p class="hide-p">{{ calculateDislikes(post) }}</p>
+          <p>{{ dislikes }}</p>
+        </div>
+      </div>
+      <div>
         <button @click="chooseLike(post)">👍</button>
-        <p>{{ dislikes }}</p>
         <button @click="chooseDislike(post)">👎</button>
       </div>
     </div>
@@ -57,26 +65,24 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 const axios = require("axios");
 const instance = axios.create({
   baseURL: "http://localhost:5000/api/",
 });
-
-import { mapState } from "vuex";
 
 export default {
   name: "posts",
   data: function () {
     return {
       mode: "view",
-      user: this.$store.state.userInfos.name,
-      email: this.$store.state.userInfos.email,
-      image: this.$store.state.userInfos.imageUrl,
-      admin: this.$store.state.userInfos.isAdmin,
       posts: [],
       post: [],
       newPost: null,
       newImage: null,
+      allLike: [],
+      allDislike: [],
       likes: 0,
       dislikes: 0,
     };
@@ -89,64 +95,48 @@ export default {
         this.posts = res.data;
       })
       .catch((err) => console.log(err));
-
-        let data = JSON.parse(localStorage.getItem('user'))
-        console.log(data.email)
-
-    await instance
-      .get("/auth/myprofile", {email: data.email})
-      .then((res) => {
-        this.user = data.name;
-        this.image = data.imageUrl;
-        this.email = data.email;
-        this.admin = data.name;
-      })
-      .catch((err) => console.log(err));
-
-      
   },
 
-
-  test: async function () {
-    console.log('test')
-  },
-
-  // updateLike: async function (post) {
-  //   this.post = post;
-  //   try {
-  //     const allLikes = await instance.get(`/likes/posts/${this.post.uuid}`);
-  //     const allDislikes = await instance.get(
-  //       `/likes/dislikes/posts/${this.post.uuid}`
-  //     );
-
-  //     this.likes = allLikes.data;
-  //     this.dislikes = allDislikes.data;
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // },
-  mounted: function () {
-    if (this.$store.state.user.uuid == "") {
+  mounted: function async() {
+    if (this.$store.state.user.userId == -1) {
       this.$router.push("/");
       return;
     }
   },
+
   computed: {
-    // likeAndDislikeChoice: async function (post) {
-    //   this.post = post;
-    //   try {
-    //     const allLikes = await instance.get(`/likes/posts/${this.post.uuid}`);
-    //     const allDislikes = await instance.get(
-    //       `/likes/dislikes/posts/${this.post.uuid}`
-    //     );
+    allLikes: async function () {
+      let i;
+      let a;
+      let b;
+      let c;
+      let arrayLikes = [];
+      let arrayDislikes = [];
+      let allLikes = [];
+      let allDislikes = [];
+      for (i = 0; i < this.posts.length; i++) {
+        for (a = 0; a < this.posts[i].likes.length; a++) {
+          if (this.posts[i].likes[a].userLike == true) {
+            arrayLikes.push(this.posts[i].uuid);
+          }
 
-    //     this.likes = allLikes.data;
-    //     this.dislikes = allDislikes.data;
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // },
+          if (this.posts[i].likes[a].userDislike == true) {
+            arrayDislikes.push(this.posts[i].uuid);
+          }
+        }
+      }
 
+      for (b = 0; b < arrayLikes.length; b++) {
+        arrayLikes[b];
+        allLikes.push(arrayLikes[b]);
+      }
+      for (c = 0; c < arrayDislikes.length; c++) {
+        arrayDislikes[c];
+        allDislikes.push(arrayDislikes[c]);
+      }
+      this.allLike = allLikes;
+      this.allDislike = allDislikes;
+    },
     validatedfields: function () {
       if (this.mode == "create") {
         if (this.newPost != null) {
@@ -156,10 +146,10 @@ export default {
         }
       }
     },
-    ...mapState(["userInfos"]),
+    ...mapGetters({ user: "getUser" }),
   },
-  methods: {
 
+  methods: {
     goToProfile: function () {
       this.$router.push("/profile");
     },
@@ -174,7 +164,7 @@ export default {
     },
     createNewPost: async function () {
       const formData = new FormData();
-      formData.append("userUuid", this.$store.state.userInfos.uuid);
+      formData.append("userId", this.user.userId);
       formData.append("body", this.newPost);
       formData.append("imagePost", this.newImage);
 
@@ -182,24 +172,47 @@ export default {
         .post("/posts/", formData)
         .then((res) => {
           console.log(res);
+          document.location.reload();
         })
         .catch((err) => console.log(err));
     },
     deletePost: async function (post) {
       this.post = post;
-      let data = { email: this.email };
+      let data = {
+        userId: this.user.userId,
+      };
       await instance
         .delete(`/posts/${this.post.uuid}`, { data })
         .then((res) => {
+          document.location.reload();
           console.log(res);
         })
         .catch((err) => console.log(err));
     },
-
+    calculateLikes: async function (post) {
+      let result = 0;
+      let i;
+      for (i = 0; i < this.allLike.length; i++) {
+        if (post.uuid == this.allLike[i]) {
+          result++;
+        }
+      }
+      this.likes = result;
+    },
+    calculateDislikes: async function (post) {
+      let result = 0;
+      let i;
+      for (i = 0; i < this.allDislike.length; i++) {
+        if (post.uuid == this.allDislike[i]) {
+          result++;
+        }
+      }
+      this.dislikes = result;
+    },
     chooseLike: async function (post) {
       this.post = post;
       let data = {
-        userUuid: this.$store.state.userInfos.uuid,
+        userId: this.user.userId,
         like: true,
         dislike: false,
       };
@@ -207,59 +220,48 @@ export default {
         .post(`/likes/posts/${this.post.uuid}`, data)
         .then((res) => {
           console.log(res);
+          document.location.reload();
         })
         .catch((err) => console.log(err));
     },
     chooseDislike: async function (post) {
       this.post = post;
       let data = {
-        userUuid: this.$store.state.userInfos.uuid,
-        like: true,
-        dislike: false,
+        userId: this.user.userId,
+        like: false,
+        dislike: true,
       };
       await instance
         .post(`/likes/posts/${this.post.uuid}`, data)
         .then((res) => {
           console.log(res);
+          document.location.reload();
         })
         .catch((err) => console.log(err));
-    },
-    updateLike: async function (post) {
-      this.post = post;
-      await instance
-        .get(`/likes/posts/${this.post.uuid}`)
-        .then((res) => {
-          this.likes = res.length;
-        })
-        .catch((err) => console.log(err));
-      // await instance.get(
-      //   `/likes/dislikes/posts/${this.post.uuid}`
-      // ).then((res) => {
-      //   console.log(res);
-      //   this.dislikes = res.length
-      // })
-      // .catch((err) => console.log(err));
     },
   },
 };
 </script>
 
 <style>
-.goToProfile {
-  display: flex;
-  max-width: fit-content;
+.hide-p {
+  display: none;
 }
 
 .buttonGrise {
   opacity: 0.5;
 }
-
 .posts-box {
   margin: 20px;
   width: 600px;
   border: 2px solid black;
   border-radius: 4px;
   background-color: gainsboro;
+}
+.posts-user-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .img-profil {
