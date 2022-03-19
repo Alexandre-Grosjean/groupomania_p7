@@ -42,9 +42,8 @@ import { mapGetters } from "vuex";
 const axios = require("axios");
 
 const instance = axios.create({
-  baseURL: "http://localhost:5000/api/",
+  baseURL: "http://localhost:5000/api/"
 });
-instance.defaults.timeout = 2500;
 
 export default {
   data: function () {
@@ -55,8 +54,13 @@ export default {
     };
   },
   created: async function () {
+    let data = { userId: this.user.userId };
     await instance
-      .post("/auth/profil", { userId: this.user.userId })
+      .post("/auth/profil", data,{
+        headers: {
+          authorization: "Bearer " + this.user.token,
+        }
+      })
       .then((res) => {
         this.userInfos = res.data;
         console.log(res);
@@ -96,8 +100,13 @@ export default {
       document.location.reload();
     },
     desactivate: function () {
+      let data = { userId: this.user.userId };
       instance
-        .put(`/auth/desactivate/users/${this.userInfos.uuid}`)
+        .put(`/auth/desactivate/users/${this.userInfos.uuid}`, data, {
+          headers: {
+            authorization: "Bearer " + this.user.token,
+          },
+        })
         .then((res) => {
           this.$store.commit("logout");
           console.log(res);
@@ -110,12 +119,18 @@ export default {
 
     validateUpdateProfile: function () {
       const formData = new FormData();
+      formData.append("userId", this.user.userId);
       formData.append("imageProfil", this.imageProfil);
       formData.append("name", this.name);
       instance
-        .put(`/auth/updateProfil/users/${this.userInfos.uuid}`, formData)
+        .put(`/auth/updateProfil/users/${this.userInfos.uuid}`, formData, {
+          headers: {
+            authorization: "Bearer " + this.user.token,
+          },
+        })
         .then((res) => {
           this.mode = "profile";
+          document.location.reload();
           console.log(res);
         })
         .catch((err) => console.log(err));

@@ -42,6 +42,8 @@ exports.login = async (req, res) => {
         if (user.active === true && match === true) {
 
             return res.status(200).json({
+                userName: user.name,
+                userImage: user.imageUrl,
                 userId: user.id,
                 token: jwt.sign(
                     {user: user.id},
