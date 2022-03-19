@@ -12,7 +12,7 @@
       <p v-else>
         tu as déjà un compte ?
         <span class="switchChoice" @click="switchToLogin()"
-          >creer un compte</span
+          >se connecter</span
         >
       </p>
       <div class="input-box">
@@ -136,6 +136,7 @@ export default {
           },
           function (error) {
             console.log(error);
+            self.errorAlertLogin = "alert";
           }
         );
 

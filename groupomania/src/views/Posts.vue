@@ -2,7 +2,9 @@
   <div>
     <!-- go to profils -->
     <div>
-      <button @click="goToProfile">👨‍💻</button>
+      <!-- <button @click="goToProfile">👨‍💻</button> -->
+      <p>bonjour {{this.user.userName}}</p>
+      <img @click="goToProfile" class="img-profil" :src="this.user.userImage" alt="img-Profil" />
     </div>
 
     <!-- post creation -->
@@ -89,15 +91,21 @@ export default {
   },
 
   created: async function () {
+    let data = { userId: this.user.userId };
     await instance
-      .get("/posts/")
+      .get("/posts/", {
+        data,
+        headers: {
+          authorization: "Bearer " + this.user.token,
+        },
+      })
       .then((res) => {
         this.posts = res.data;
       })
       .catch((err) => console.log(err));
   },
 
-  mounted: function async() {
+  mounted: async function () {
     if (this.$store.state.user.userId == -1) {
       this.$router.push("/");
       return;
@@ -169,7 +177,11 @@ export default {
       formData.append("imagePost", this.newImage);
 
       await instance
-        .post("/posts/", formData)
+        .post("/posts/", formData, {
+          headers: {
+            authorization: "Bearer " + this.user.token,
+          },
+        })
         .then((res) => {
           console.log(res);
           document.location.reload();
@@ -178,11 +190,14 @@ export default {
     },
     deletePost: async function (post) {
       this.post = post;
-      let data = {
-        userId: this.user.userId,
-      };
+      let data = { userId: this.user.userId };
       await instance
-        .delete(`/posts/${this.post.uuid}`, { data })
+        .delete(`/posts/${this.post.uuid}`, {
+          data,
+          headers: {
+            authorization: "Bearer " + this.user.token,
+          },
+        })
         .then((res) => {
           document.location.reload();
           console.log(res);
@@ -217,7 +232,11 @@ export default {
         dislike: false,
       };
       await instance
-        .post(`/likes/posts/${this.post.uuid}`, data)
+        .post(`/likes/posts/${this.post.uuid}`, data, {
+          headers: {
+            authorization: "Bearer " + this.user.token,
+          },
+        })
         .then((res) => {
           console.log(res);
           document.location.reload();
@@ -232,7 +251,11 @@ export default {
         dislike: true,
       };
       await instance
-        .post(`/likes/posts/${this.post.uuid}`, data)
+        .post(`/likes/posts/${this.post.uuid}`, data, {
+          headers: {
+            authorization: "Bearer " + this.user.token,
+          },
+        })
         .then((res) => {
           console.log(res);
           document.location.reload();

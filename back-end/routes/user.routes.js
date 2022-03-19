@@ -9,14 +9,12 @@ const upload = require('../middleware/multer-config');
 router.post('/register', authCtrl.register);
 // login
 router.post('/login', authCtrl.login);
-// get profil
-router.post('/profil/', userCtrl.myProfil);
 // change profil
-router.post('/profil/', userCtrl.profil);
+router.post('/profil/', auth, userCtrl.profil);
 // update profil
-router.put('/updateProfil/users/:uuid',  upload.single('imageProfil'), userCtrl.updateProfil);
+router.put('/updateProfil/users/:uuid', auth,  upload.single('imageProfil'), userCtrl.updateProfil);
 //desactivation account
-router.put('/desactivate/users/:uuid',  userCtrl.desactivate);
+router.put('/desactivate/users/:uuid', auth,  userCtrl.desactivate);
 
 
 module.exports = router;

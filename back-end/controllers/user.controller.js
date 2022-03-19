@@ -1,25 +1,11 @@
 const { User } = require('../models');
 const fs = require('fs');
 
-exports.myProfil = async (req, res) => {
+exports.profil = async (req, res) => {
     const userId = req.body.userId
     try {
         const user = await User.findOne({
             where: { id: userId }
-        });
-
-        return res.status(200).json(user)
-    } catch (err) {
-        console.log(err);
-        return res.status(500).json({ error: 'something went wrong!' })
-    }
-}
-
-exports.profil = async (req, res) => {
-    const email = req.body.email
-    try {
-        const user = await User.findOne({
-            where: { email }
         });
 
         return res.status(200).json(user)

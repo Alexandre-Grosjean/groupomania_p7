@@ -9,18 +9,17 @@ let localUser = localStorage.getItem('user')
 if (!localUser) {
   localUser = {
     userId: -1,
-    token: ""
+    token: ''
   }
-} 
+}
 else {
   try {
     localUser = JSON.parse(localUser)
-    // instance.defaults.headers.common['Authorization'] = `Bearer ${localUser.token}`
-    console.log('token hors mutation' + ' _____ ' + localUser.token)
+    instance.defaults.headers.common['authorization'] = localUser.token;
   } catch (ex) {
     localUser = {
       userId: -1,
-      token: ""
+      token: ''
     }
   }
 }
@@ -35,14 +34,14 @@ export default createStore({
   mutations: {
     updateUser(state, payload) {
       state.user = payload
-      // console.log(` ${state.user.token}`)
-      // instance.defaults.headers.common['Authorization'] = `Bearer ${state.user.token}`
       localStorage.setItem('user', JSON.stringify(payload))
     },
     logout: function (state) {
       state.user = {
         userId: -1,
-        token: ''
+        token: '',
+        userImage: '',
+        userName: '',
       }
       localStorage.removeItem('user');
     },
@@ -51,7 +50,7 @@ export default createStore({
     setUser: ({ commit }, user) => {
       return new Promise((resolve, reject) => {
         instance.post('/auth/login', user)
-          .then( async function (res) {
+          .then(async function (res) {
             commit('updateUser', res.data);
             resolve(res);
           })
@@ -59,8 +58,8 @@ export default createStore({
             reject(err);
           });
       });
-      },
-},
+    },
+  },
   modules: {
   }
 })
