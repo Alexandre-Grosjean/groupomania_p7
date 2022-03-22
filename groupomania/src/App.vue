@@ -21,7 +21,8 @@
   justify-content: center;
 }
 .logo-entreprise {
-  height: 100px;
+  max-height: 100px;
+  width: 300px
 }
 
 </style>

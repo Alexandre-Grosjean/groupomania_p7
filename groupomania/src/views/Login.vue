@@ -164,7 +164,8 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+
 .template-box {
   display: flex;
   justify-content: center;
@@ -175,7 +176,6 @@ export default {
   width: 350px;
   height: 250px;
   background-color: lightgrey;
-  border: 1px solid lightslategray;
   border-radius: 5px;
   margin-top: 50px;
   padding: 10px;
@@ -191,10 +191,11 @@ export default {
 }
 
 .validation-box {
-  margin: 20px;
+  margin: 10px;
 }
 .button-log {
   border-radius: 10px;
+  background-color: white;
 }
 
 .button-create {
@@ -207,8 +208,10 @@ export default {
   border-radius: 10px;
 }
 
-.alert-p {
+.alert-p p{
   font-size: 14px;
-    color: red
+    color: red;
+    padding: 0;
+    margin: 0;
 }
 </style>

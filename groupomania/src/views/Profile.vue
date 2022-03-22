@@ -1,38 +1,58 @@
 <template>
   <div>
     <div>
-      <p @click="goToPosts">return</p>
+      <fa
+      icon="angles-left"
+      class="return-button" 
+      @click="goToPosts" />
+      <h1>info profil</h1>
     </div>
-    <h1>info profile</h1>
-    <p v-if="mode == 'profile'" @click="switchToUpdateProfile()">🖋️</p>
-    <div v-if="mode == 'profile'">
-      <p>{{ this.userInfos.name }}</p>
-    </div>
-    <div v-else>
-      <p>{{ this.userInfos.name }}</p>
-      <input v-model="name" type="text" placeholder="quel sera ton choix ?" />
-      <p class="alert_condition">ecrire ou modifier pour valider changement</p>
-    </div>
-    <p>{{ this.userInfos.email }}</p>
-    <p v-if="this.userInfos.isAdmin === true">admin</p>
-    <div v-if="mode == 'updateProfile'">
-      <input type="file" name="imageProfil" ref="file" @change="onFileChange" />
-    </div>
-    <div>
-      <img class="image_profil" :src="this.userInfos.imageUrl" />
-    </div>
-    <div v-if="mode == 'updateProfile'">
-      <button
-        @click="validateUpdateProfile"
-        :class="{ buttonGrise: !validatedfields }"
-      >
-        valider
-      </button>
-      <button @click="switchToProfile()">annuler</button>
-    </div>
-    <div v-else>
-      <button @click="disconnect">deconnexion</button>
-      <button @click="desactivate">desactivation</button>
+    <div class="profil-box">
+      <div v-if="mode == 'profile'" class="edit-profil-box">
+        <p>{{ this.userInfos.name }}</p>
+        <fa
+          icon="pen"
+          class="pointer-cursor"
+          v-if="mode == 'profile'"
+          @click="switchToUpdateProfile()"
+        />
+      </div>
+      <div v-else>
+        <p class="name-edit-box">{{ this.userInfos.name }}</p>
+        <input v-model="name" type="text" placeholder="quel sera ton choix ?" />
+        <p class="alert_condition">
+          ecrire ou modifier pour valider changement
+        </p>
+      </div>
+      <p>{{ this.userInfos.email }}</p>
+      <fa 
+      v-if="this.userInfos.isAdmin === true" 
+      icon="crown"
+      class="admin-logo" />
+      <div v-if="mode == 'updateProfile'">
+        <input
+          type="file"
+          name="imageProfil"
+          ref="file"
+          @change="onFileChange"
+        />
+      </div>
+      <div>
+        <img class="image_profil" :src="this.userInfos.imageUrl" />
+      </div>
+      <div v-if="mode == 'updateProfile'">
+        <button
+          @click="validateUpdateProfile"
+          :class="{ buttonGriseProfil: !validatedfields }"
+        >
+          valider
+        </button>
+        <button @click="switchToProfile()">annuler</button>
+      </div>
+      <div v-else>
+        <button @click="disconnect">deconnexion</button>
+        <button @click="desactivate">desactivation</button>
+      </div>
     </div>
   </div>
 </template>
@@ -42,7 +62,7 @@ import { mapGetters } from "vuex";
 const axios = require("axios");
 
 const instance = axios.create({
-  baseURL: "http://localhost:5000/api/"
+  baseURL: "http://localhost:5000/api/",
 });
 
 export default {
@@ -56,14 +76,17 @@ export default {
   created: async function () {
     let data = { userId: this.user.userId };
     await instance
-      .post("/auth/profil", data,{
+      .post("/auth/profil", data, {
         headers: {
           authorization: "Bearer " + this.user.token,
-        }
+        },
       })
       .then((res) => {
         this.userInfos = res.data;
-        console.log(res);
+        this.$store.commit("update", {
+          userName: res.data.name,
+          userImage: res.data.imageUrl,
+        });
       })
       .catch((err) => console.log(err));
   },
@@ -87,7 +110,7 @@ export default {
   },
   methods: {
     goToPosts: function () {
-      this.$router.push("/posts");
+      this.$router.push("/");
     },
     switchToUpdateProfile: function () {
       this.mode = "updateProfile";
@@ -140,11 +163,79 @@ export default {
 </script>
 
 <style>
-.image_profil {
-  width: 400px;
+h1 {
+  text-align: center;
 }
 
-.buttonGrise {
+.return-button {
+  position: absolute;
+  font-size: 35px;
+  cursor: pointer;
+  color: grey;
+}
+
+.return-button:hover {
+  color: rgb(71, 71, 71);
+}
+
+.pointer-cursor {
+  font-size: 17px;
+  cursor: pointer;
+  width: fit-content;
+  color: darkgray;
+}
+
+.pointer-cursor:hover {
+  color: rgb(71, 71, 71);
+}
+
+.profil-box {
+  border-radius: 10px;
+  padding: 15px;
+  width: fit-content;
+  background-color: rgb(240, 240, 240);
+}
+
+.edit-profil-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.edit-profil-box p {
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  font-weight: bold;
+  color: blue;
+}
+
+.name-edit-box {
+  font-size: 20px;
+  font-weight: bold;
+  color: blue;
+}
+
+.profil-box button {
+  margin-top: 10px;
+  margin-right: 15px;
+  padding: 5px;
+  border-radius: 15px;
+  cursor: pointer;
+  background-color: white;
+}
+
+.admin-logo {
+  color: gold;
+}
+
+.image_profil {
+  margin: 10px 0;
+  width: 320px;
+  border: 0.5px solid lightgrey;
+}
+
+.buttonGriseProfil {
   opacity: 0.5;
 }
 

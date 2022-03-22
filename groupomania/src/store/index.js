@@ -11,8 +11,7 @@ if (!localUser) {
     userId: -1,
     token: ''
   }
-}
-else {
+} else {
   try {
     localUser = JSON.parse(localUser)
     instance.defaults.headers.common['authorization'] = localUser.token;
@@ -36,11 +35,19 @@ export default createStore({
       state.user = payload
       localStorage.setItem('user', JSON.stringify(payload))
     },
+    update: function (state, payload) {
+      state.user.userName = payload.userName;
+      state.user.userImage = payload.userImage;
+      let localUser = JSON.parse(localStorage.getItem('user'));
+      localUser["userName"] = payload.userName;
+      localStorage.setItem("user", JSON.stringify(localUser));
+      localUser["userImage"] = payload.userImage
+      localStorage.setItem("user", JSON.stringify(localUser));
+    },
     logout: function (state) {
       state.user = {
         userId: -1,
         token: '',
-        userImage: '',
         userName: '',
       }
       localStorage.removeItem('user');
