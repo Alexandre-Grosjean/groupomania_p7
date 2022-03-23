@@ -14,7 +14,7 @@ languages et frameworks utilisé dans ce projet :
 
 Etapes pour lancer le projet
 
-1 : ``https://github.com/Maki-Alex/groupomania_p7.git`` un CMD
+1 : cloner ``https://github.com/Maki-Alex/groupomania_p7.git`` via un CMD
 
 2 : dans les dossiers respectifs `` back-end`` & ``groupomania`` ouvrez un CMD et lancer ``npm install``
 
