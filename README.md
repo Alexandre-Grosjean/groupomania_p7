@@ -2,7 +2,7 @@ P7 OpenClassRooms - Créez un réseau social d’entreprise
 
 Le projet consiste à construire un réseau social interne pour les employés de Groupomania.
 
-Le projet est entièrement hosté en local.
+Le projet est entièrement hosté en local et construit sur un princpipe de mobile-first.
 
 languages et frameworks utilisé dans ce projet :
 
