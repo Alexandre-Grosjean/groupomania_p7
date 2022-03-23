@@ -12,13 +12,13 @@ Etapes pour lancer le projet
 
 3 : à la racine du dossier back-end creez un fichier ``.env`` et coller le contenu ci-dessous :
 
-``
+```
 BDD_user="root"
 BDD_password="1234"
 BDD_host="127.0.0.1"
 PORT="5000"
 TOKEN_SECRET='vhvvhhjfyxftftdxtdwngtdxytrvyrwyrxcv'
-``
+```
 
 4 : si vous n'avez pas sequelize-cli en global lancez un ``npm i sequelize-cli``
 
