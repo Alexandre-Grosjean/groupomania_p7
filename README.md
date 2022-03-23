@@ -8,7 +8,7 @@ Etapes pour lancer le projet
 
 1 : ``https://github.com/Maki-Alex/groupomania_p7.git`` un CMD
 
-2 : dans le dossier ``images`` creer un dossier ``posts``
+2 : dans le dossier ``back-end/images`` creer un dossier ``posts``
 
 3 : à la racine du dossier back-end creez un fichier ``.env`` et coller le contenu ci-dessous :
 
