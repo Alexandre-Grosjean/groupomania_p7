@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page-profils">
     <div>
       <fa
       icon="angles-left"
@@ -21,7 +21,7 @@
         <p class="name-edit-box">{{ this.userInfos.name }}</p>
         <input v-model="name" type="text" placeholder="quel sera ton choix ?" />
         <p class="alert_condition">
-          ecrire ou modifier pour valider changement
+          nom entre 3 et 10 lettres pour valider changement
         </p>
       </div>
       <p>{{ this.userInfos.email }}</p>
@@ -163,8 +163,17 @@ export default {
 </script>
 
 <style>
+
+.page-profils {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;;
+  margin-top: -130px;
+}
+
 h1 {
   text-align: center;
+  margin-bottom: 35px;
 }
 
 .return-button {
@@ -172,6 +181,7 @@ h1 {
   font-size: 35px;
   cursor: pointer;
   color: grey;
+  margin: 25px 0 0 30px;
 }
 
 .return-button:hover {
@@ -190,10 +200,11 @@ h1 {
 }
 
 .profil-box {
+  margin: auto;
   border-radius: 10px;
   padding: 15px;
   width: fit-content;
-  background-color: rgb(240, 240, 240);
+  background-color:  rgb(231, 231, 231);
 }
 
 .edit-profil-box {
@@ -240,6 +251,7 @@ h1 {
 }
 
 .alert_condition {
-  color: lightblue;
+  font-size: 14px;
+  color: rgb(204, 92, 129);
 }
 </style>

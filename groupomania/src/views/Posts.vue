@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="posts-page">
     <!-- go to profils -->
     <div class="salutation-Profile">
       <p>
@@ -52,6 +52,7 @@
       v-for="post in posts.slice().reverse()"
       :key="post.uuid"
     >
+    <div v-if="post.user.active === true">
       <div class="posts-user-box">
         <img class="img-profil" :src="post.user.imageUrl" alt="img-Profil" />
         <p class="user-post">{{ post.user.name }}</p>
@@ -91,6 +92,7 @@
             </p>
           </div>
         </div>
+      </div>
       </div>
     </div>
   </div>
@@ -303,6 +305,11 @@ export default {
 body {
   display: flex;
   justify-content: center;
+  background-color: rgb(239, 242, 251);
+}
+
+.posts-page {
+  margin-top: -150px;
 }
 
 .salutation-Profile {
@@ -310,6 +317,7 @@ body {
   flex-direction: row;
   justify-content: right;
   margin-right: 15px;
+  font-weight: 500;
 }
 
 .link-profile {
@@ -353,9 +361,12 @@ body {
 }
 
 .create-box textarea {
-  height: 50px;
+  height: 70px;
   max-width: 340px;
   margin-bottom: 15px;
+  border: none;
+  padding: 2px;
+  border-radius: 5px;
 }
 
 .button-create-box button {
@@ -425,13 +436,14 @@ body {
 .imgOfPost {
   height: 350px;
   width: 350px;
-  background-color: rgb(246, 246, 246);
+  background-color: white;
 }
 
 .posts-body-text {
   margin: -5px 0;
   padding: 7px 10px;
-  background-color: rgb(231, 231, 231);
+  background-color: white;
+  border-top: 2px solid rgb(239, 242, 251);
   font-weight: 500;
 }
 
@@ -485,7 +497,7 @@ body {
   width: 50px;
   height: 50px;
   position: fixed;
-  margin: 650px 0 0 330px;
+  margin: 620px 0 0 330px;
 }
 
 .scroll-top:hover {
@@ -524,7 +536,7 @@ body {
   .imgOfPost {
     height: 350px;
     width: 550px;
-    background-color: rgb(246, 246, 246);
+    background-color: white;
   }
   .scroll-top {
     color: rgb(193, 193, 193);

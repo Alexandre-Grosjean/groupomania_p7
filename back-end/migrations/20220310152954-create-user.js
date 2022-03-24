@@ -18,7 +18,8 @@ module.exports = {
         allowNull: false,
         validate: {
           notNull: { msg: 'User must have a name' },
-          notEmpty: { msg: 'User must not be empty' }
+          notEmpty: { msg: 'User must not be empty' },
+          len: [3,10]
         }
       },
       email: {

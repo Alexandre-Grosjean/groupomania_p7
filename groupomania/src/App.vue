@@ -15,14 +15,19 @@
 
 </script>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&display=swap');
+
+body {
+  font-family: "Raleway", sans-serif ;
+}
 
 .logo {
   display: flex;
   justify-content: center;
 }
 .logo-entreprise {
-  max-height: 100px;
-  width: 300px
+  height: 390px;
+  margin-top: -150px
 }
 
 </style>

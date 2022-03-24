@@ -169,15 +169,15 @@ export default {
 .template-box {
   display: flex;
   justify-content: center;
+  font-weight: 500;
 }
 
 .box_log_register {
   text-align: center;
   width: 350px;
-  height: 250px;
-  background-color: lightgrey;
+  height: fit-content;
+  background-color: gainsboro;
   border-radius: 5px;
-  margin-top: 50px;
   padding: 10px;
 }
 .switchChoice {
@@ -186,8 +186,14 @@ export default {
 }
 
 .input-box {
-  margin: 5px 50px;
+  margin: 5px 45px;
   text-align: right;
+}
+
+input {
+  border: none;
+  padding: 4px;
+  border-radius: 5px;
 }
 
 .validation-box {
