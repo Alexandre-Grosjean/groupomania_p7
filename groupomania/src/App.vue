@@ -11,14 +11,12 @@
   </div>
 </template>
 <script>
-
-
 </script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&display=swap");
 
 body {
-  font-family: "Raleway", sans-serif ;
+  font-family: "Raleway", sans-serif;
 }
 
 .logo {
@@ -26,8 +24,15 @@ body {
   justify-content: center;
 }
 .logo-entreprise {
-  height: 390px;
-  margin-top: -150px
+  height: 290px;
+  margin-top: -100px;
+  margin-bottom: 50px;
 }
 
+@media screen and (min-width: 580px) {
+  .logo-entreprise {
+    height: 390px;
+    margin-top: -150px;
+  }
+}
 </style>

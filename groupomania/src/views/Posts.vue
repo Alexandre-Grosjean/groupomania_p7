@@ -3,7 +3,7 @@
     <!-- go to profils -->
     <div class="salutation-Profile">
       <p>
-        bonjour
+        Bonjour
         <span @click="goToProfile" class="name-profile">{{
           this.user.userName
         }}</span>
@@ -103,7 +103,7 @@
                 {{ post.comment.length }}
               </p>
             </div>
-            <div @click="switchToCreateComment">
+            <div @click="switchToCreateComment" class="create-comment-button">
               <p>
                 <fa icon="comment" class="create-comment" />
                 commenter
@@ -133,24 +133,17 @@
             :key="comment.id"
             class="comment-box"
           >
-            <div>
+            <div class="comment-name">
               <p>{{ comment.userName }}</p>
-              <p>
-                {{
-                  comment.createdAt
-                    .split("T")
-                    .join(" | ")
-                    .split(".000Z")
-                    .join("")
-                }}
-              </p>
+              <fa
+                @click="deleteComment(comment)"
+                icon="trash"
+                class="trash-icon"
+              />
             </div>
-            <fa
-              @click="deleteComment(comment)"
-              icon="trash"
-              class="trash-icon"
-            />
-            <p>{{ comment.body }}</p>
+            <div class="comment-body">
+              <p>{{ comment.body }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -582,10 +575,11 @@ body {
   display: flex;
   flex-direction: row;
   margin: -10px;
+  max-width: 350px;
 }
 
 .like-box p {
-  padding: 0 55px;
+  padding: 0 35px;
   font-size: 16px;
   font-weight: bold;
 }
@@ -593,7 +587,7 @@ body {
 .like-Choice {
   font-size: 25px;
   padding-right: 7px;
-  margin: 5px ;
+  margin: 5px;
   color: blue;
   cursor: pointer;
 }
@@ -630,7 +624,46 @@ body {
   margin: 10px 10px;
   padding: 10px;
   border-radius: 10px;
-  background-color: grey;
+}
+
+.create-comment {
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.create-comment-button {
+  cursor: pointer;
+  width: 300px;
+}
+
+.create-comment-button:hover {
+  color: rgb(113, 113, 113);
+}
+
+.create-comment textarea {
+  width: 325px;
+  height: 30px;
+  border: none;
+  border-radius: 5px;
+}
+
+.comment-name {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 4px;
+  margin: 0px;
+  height: fit-content;
+  font-weight: bold;
+  border-top: 1px solid rgb(184, 184, 184);
+}
+
+.comment-body {
+  height: fit-content;
+  background-color: white;
+  border-radius: 10px;
+  margin: 0px;
+  padding: 5px 5px;
 }
 
 .scroll-top {
@@ -682,6 +715,24 @@ body {
     width: 550px;
     background-color: white;
   }
+
+  .like-box {
+    display: flex;
+    flex-direction: row;
+    margin: -10px;
+  }
+
+  .create-comment-button {
+    margin: 0 0 0 -80px;
+    padding: 0px;
+  }
+
+  .create-comment textarea {
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    max-width: 320px;
+  }
   .scroll-top {
     color: rgb(193, 193, 193);
     opacity: 0.6;
@@ -690,7 +741,7 @@ body {
     width: 50px;
     height: 50px;
     position: fixed;
-    margin: 28% 0px 0px 630px;
+    margin: 650px;
   }
 }
 </style>

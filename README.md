@@ -1,26 +1,25 @@
-P7 OpenClassRooms - Créez un réseau social d’entreprise
+P7 OpenClassRooms - creating a business media
 
-Le projet consiste à construire un réseau social interne pour les employés de Groupomania.
+the project is completely hosted and mobile-first
 
-Le projet est entièrement hosté en local et construit sur un princpipe de mobile-first.
+languages et frameworks used for this project :
 
-languages et frameworks utilisé dans ce projet :
+`node - 16.14.0`
+`Vue - 3.2.13`
+`VueX - 4`
+`VueRouter - 4.0.3`
+`axios - 0.26.1`
+`Sequelize - 6.17.0`
 
-`nodeJs`
-`Vue`
-`VueX`
-`VueRouter`
-`Sequelize`
+steps to launch project
 
-Etapes pour lancer le projet
+1 : clone repo git with a terminal
 
-1 : cloner ``https://github.com/Maki-Alex/groupomania_p7.git`` via un CMD
+2 : in the main folder `` back-end`` and ``groupomania`` open the terminal and launch ``npm install``
 
-2 : dans les dossiers respectifs `` back-end`` & ``groupomania`` ouvrez un CMD et lancer ``npm install``
+3 : in the folder ``back-end/images`` create a folder named ``posts``
 
-3 : dans le dossier ``back-end/images`` creer un dossier ``posts``
-
-4 : à la racine du dossier back-end creez un fichier ``.env`` et coller le contenu ci-dessous (modifier root et 1234 en fonction de votre user et mot de passe MySQL):
+4 : in the folder ``back-end`` create a file ``.env`` and paste (modify root and 1234 with your user and password of MySQL) :
 
 ```
 BDD_user="root"
@@ -30,13 +29,13 @@ PORT="5000"
 TOKEN_SECRET='vhvvhhjfyxftftdxtdwngtdxytrvyrwyrxcv'
 ```
 
-5 : si vous n'avez pas sequelize-cli en global lancez un ``npm i sequelize-cli``
+5 : if you don't have ``sequelize-cli`` in your global system, launch ``npm i sequelize-cli``
 
-6 : initialiser sequelize avec `` sequelize db:migrate ``
+6 : initialize sequelize with `` sequelize db:migrate ``
 
-7 : dans le dossier racine ``back-end`` via le CMD ecrivez `` npm start ``
+7 : in the folder ``back-end`` launch `` npm start ``
 
-8 : dans le dossier racine ``groupomania`` via le CMD ecrivez `` npm run serve ``
+8 : in the folder ``groupomania`` launch `` npm run serve ``
 
-9 : faites un ``ctrl`` + clique droit sur ``http://localhost:8080/`` via le CMD de groupomania 
+9 : in your browser go to this link ``http://localhost:8080``
 

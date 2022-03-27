@@ -49,9 +49,9 @@
       </div>
       <div v-else>
         <button @click="disconnect">deconnexion</button>
-      </div>
-      <div v-if="this.userInfos.isAdmin === true">
-        <button @click="getAllProfil">bannir / reactiver un compte</button>
+        <button v-if="this.userInfos.isAdmin === true" @click="getAllProfil">
+          bannir / reactiver un compte
+        </button>
       </div>
     </div>
     <div v-if="this.modeAdmin == true">
@@ -59,16 +59,24 @@
         <div v-if="profil.isAdmin != true">
           <div class="profil-list">
             <div>
-              <p>{{ profil.name }}</p>
-              <p>{{ profil.email }}</p>
+              <p>
+                name: <span class="info-profil">{{ profil.name }}</span> ,
+                email: <span class="info-profil">{{ profil.email }}</span>
+              </p>
             </div>
             <div>
               <fa
                 v-if="profil.active === true"
                 icon="check"
                 @click="desactivate(profil)"
+                class="status-profil-true"
               />
-              <fa v-else icon="xmark" @click="reactivate(profil)" />
+              <fa
+                v-else
+                icon="xmark"
+                @click="reactivate(profil)"
+                class="status-profil-false"
+              />
             </div>
           </div>
         </div>
@@ -308,10 +316,34 @@ h1 {
 }
 
 .profil-list {
+  display: flex;
+  justify-content: space-evenly;
   border-radius: 15px;
   background-color: white;
   width: 340px;
-  margin: 20px;
-  padding: 5px;
+  margin: 5px 25px;
+  padding: 0px;
 }
+
+.profil-list p {
+  font-weight: bold;
+}
+.info-profil {
+  font-weight: 400;
+  font-size: 14px;
+  color: blue;
+}
+
+.status-profil-true {
+  color: green;
+  height: 25px;
+  margin: 15px;
+}
+
+.status-profil-false {
+  color: red;
+  height: 25px;
+  margin: 15px;
+}
+
 </style>
