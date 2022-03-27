@@ -5,8 +5,9 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
 
-     static associate({ Post }) {
+     static associate({ Post, Comment }) {
       this.hasMany(Post, { foreignKey: 'userId', as: 'user' })
+      this.hasMany(Comment, { foreignKey: 'userId', as: 'userComment' })
     }
         
     toJSON() {

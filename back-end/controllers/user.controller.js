@@ -15,6 +15,17 @@ exports.profil = async (req, res) => {
     }
 }
 
+exports.allProfil = async (req, res) => {
+    try {
+        const user = await User.findAll()
+
+        return res.status(200).json(user)
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'something went wrong!' })
+    }
+}
+
 exports.updateProfil = async (req, res) => {
     const uuid = req.params.uuid;
     const { name } = req.body;
@@ -63,16 +74,46 @@ exports.updateProfil = async (req, res) => {
 
 exports.desactivate = async (req, res) => {
     const uuid = req.params.uuid;
+    const userId = req.body.userId;
 
     try {
         const user = await User.findOne({
             where: { uuid }
         });
+        const userAdmin = await User.findOne({
+            where: { id: userId }
+        });
+        if (userAdmin.isAdmin == true) {
+            user.active = false;
+    
+            await user.save();
+            return res.status(200).json({ message: "account desactivated by admin" });
+            
+        }
 
-        user.active = false;
+    } catch {
+        return res.status(500).json({ error: 'something went wrong!' })
+    }
+}
 
-        await user.save();
-        return res.status(200).json({ message: "account desactivated" });
+exports.reactivate = async (req, res) => {
+    const uuid = req.params.uuid;
+    const userId = req.body.userId;
+
+    try {
+        const user = await User.findOne({
+            where: { uuid }
+        });
+        const userAdmin = await User.findOne({
+            where: { id: userId }
+        });
+        if (userAdmin.isAdmin == true) {
+            user.active = true;
+    
+            await user.save();
+            return res.status(200).json({ message: "account reactivated by admin" });
+            
+        }
 
     } catch {
         return res.status(500).json({ error: 'something went wrong!' })

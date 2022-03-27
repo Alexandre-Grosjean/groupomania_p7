@@ -32,7 +32,7 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts = async (req, res) => {
     try {
         const post = await Post.findAll({
-            include: ['user','likes']
+            include: ['user','likes','comment']
         });
 
         return res.status(200).json(post);

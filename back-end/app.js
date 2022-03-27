@@ -24,6 +24,7 @@ app.use(express.urlencoded({ extended: true}));
 const userRoutes = require('./routes/user.routes');
 const postRoutes = require('./routes/post.routes');
 const likeRoutes = require('./routes/like.routes');
+const commentRoutes = require('./routes/comment.routes')
 
 //multer directory
 app.use('/images', express.static(path.join(__dirname, 'images')));
@@ -42,6 +43,8 @@ app.use('/api/auth', userRoutes);
 app.use('/api/posts', postRoutes);
 //route for likes
 app.use('/api/likes', likeRoutes);
+//route for comment
+app.use('/api/comment', commentRoutes);
 
 //export to server
 

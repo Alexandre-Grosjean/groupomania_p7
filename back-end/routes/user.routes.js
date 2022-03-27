@@ -11,10 +11,14 @@ router.post('/register', authCtrl.register);
 router.post('/login', authCtrl.login);
 // change profil
 router.post('/profil/', auth, userCtrl.profil);
+// get all profil
+router.get('/allProfil/', auth, userCtrl.allProfil);
 // update profil
 router.put('/updateProfil/users/:uuid', auth,  upload.single('imageProfil'), userCtrl.updateProfil);
 //desactivation account
-router.put('/desactivate/users/:uuid', auth,  userCtrl.desactivate);
+router.put('/desactivate/users/:uuid', userCtrl.desactivate);
+//reactivation account
+router.put('/reactivate/users/:uuid', userCtrl.reactivate);
 
 
-module.exports = router;
+module.exports = router; 

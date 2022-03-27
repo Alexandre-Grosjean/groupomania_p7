@@ -52,21 +52,6 @@ exports.login = async (req, res) => {
                     { expiresIn: '12h' }
                 )
             });
-
-        } else if (user.active !== true && match === true) {
-            user.active = true;
-
-            await user.save()
-
-            return res.status(200).json({
-                userId: user.id,
-                token: jwt.sign(
-                    {user: user.id},
-                    'ceci_est_mon_token_ultra_secret',
-                    { expiresIn: '12h' }
-                )
-            });
-
         } else {
 
             res.status(401).json({ message: "user can't log" })

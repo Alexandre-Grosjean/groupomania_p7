@@ -6,9 +6,10 @@ module.exports = (sequelize, DataTypes) => {
   class Post extends Model {
 
   
-    static associate({ User, Likes }) {
+    static associate({ User, Likes, Comment }) {
       this.belongsTo(User, {foreignKey: 'userId', as: 'user'})
       this.hasMany(Likes, { foreignKey: 'postId', as: 'likes', onDelete: 'CASCADE'})
+      this.hasMany(Comment, { foreignKey: 'postId', as: 'comment', onDelete: 'CASCADE'})
     };
     toJSON() {
       return { ...this.get(), id: undefined, userId: undefined }

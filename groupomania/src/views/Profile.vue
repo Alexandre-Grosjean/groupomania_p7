@@ -1,10 +1,7 @@
 <template>
   <div class="page-profils">
     <div>
-      <fa
-      icon="angles-left"
-      class="return-button" 
-      @click="goToPosts" />
+      <fa icon="angles-left" class="return-button" @click="goToPosts" />
       <h1>info profil</h1>
     </div>
     <div class="profil-box">
@@ -25,10 +22,11 @@
         </p>
       </div>
       <p>{{ this.userInfos.email }}</p>
-      <fa 
-      v-if="this.userInfos.isAdmin === true" 
-      icon="crown"
-      class="admin-logo" />
+      <fa
+        v-if="this.userInfos.isAdmin === true"
+        icon="crown"
+        class="admin-logo"
+      />
       <div v-if="mode == 'updateProfile'">
         <input
           type="file"
@@ -51,7 +49,29 @@
       </div>
       <div v-else>
         <button @click="disconnect">deconnexion</button>
-        <button @click="desactivate">desactivation</button>
+      </div>
+      <div v-if="this.userInfos.isAdmin === true">
+        <button @click="getAllProfil">bannir / reactiver un compte</button>
+      </div>
+    </div>
+    <div v-if="this.modeAdmin == true">
+      <div v-for="profil in allProfil" :key="profil.id">
+        <div v-if="profil.isAdmin != true">
+          <div class="profil-list">
+            <div>
+              <p>{{ profil.name }}</p>
+              <p>{{ profil.email }}</p>
+            </div>
+            <div>
+              <fa
+                v-if="profil.active === true"
+                icon="check"
+                @click="desactivate(profil)"
+              />
+              <fa v-else icon="xmark" @click="reactivate(profil)" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -69,8 +89,10 @@ export default {
   data: function () {
     return {
       mode: "profile",
+      modeAdmin: false,
       userInfos: "",
       name: "",
+      allProfil: [],
     };
   },
   created: async function () {
@@ -122,19 +144,50 @@ export default {
       this.$store.commit("logout");
       document.location.reload();
     },
-    desactivate: function () {
-      let data = { userId: this.user.userId };
+    getAllProfil: function () {
       instance
-        .put(`/auth/desactivate/users/${this.userInfos.uuid}`, data, {
+        .get(`/auth/allProfil`, {
           headers: {
             authorization: "Bearer " + this.user.token,
           },
         })
         .then((res) => {
-          this.$store.commit("logout");
+          if (this.modeAdmin == true) {
+            this.modeAdmin = false;
+          } else {
+            this.modeAdmin = true;
+          }
+          this.allProfil = res.data;
           console.log(res);
-          document.location.reload();
         });
+    },
+    desactivate: function (profil) {
+      let data = { userId: this.user.userId };
+      instance
+        .put(`/auth/desactivate/users/${profil.uuid}`, data, {
+          headers: {
+            authorization: "Bearer " + this.user.token,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          profil.active = false;
+        })
+        .catch((err) => console.log(err));
+    },
+    reactivate: function (profil) {
+      let data = { userId: this.user.userId };
+      instance
+        .put(`/auth/reactivate/users/${profil.uuid}`, data, {
+          headers: {
+            authorization: "Bearer " + this.user.token,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          profil.active = true;
+        })
+        .catch((err) => console.log(err));
     },
     onFileChange() {
       this.imageProfil = this.$refs.file.files[0];
@@ -163,11 +216,10 @@ export default {
 </script>
 
 <style>
-
 .page-profils {
   display: flex;
   flex-direction: column;
-  justify-content: center;;
+  justify-content: center;
   margin-top: -130px;
 }
 
@@ -204,7 +256,7 @@ h1 {
   border-radius: 10px;
   padding: 15px;
   width: fit-content;
-  background-color:  rgb(231, 231, 231);
+  background-color: rgb(231, 231, 231);
 }
 
 .edit-profil-box {
@@ -253,5 +305,13 @@ h1 {
 .alert_condition {
   font-size: 14px;
   color: rgb(204, 92, 129);
+}
+
+.profil-list {
+  border-radius: 15px;
+  background-color: white;
+  width: 340px;
+  margin: 20px;
+  padding: 5px;
 }
 </style>

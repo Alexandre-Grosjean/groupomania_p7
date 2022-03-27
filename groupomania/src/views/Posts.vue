@@ -52,47 +52,107 @@
       v-for="post in posts.slice().reverse()"
       :key="post.uuid"
     >
-    <div v-if="post.user.active === true">
-      <div class="posts-user-box">
-        <img class="img-profil" :src="post.user.imageUrl" alt="img-Profil" />
-        <p class="user-post">{{ post.user.name }}</p>
-        <p>
-          {{ post.createdAt.split("T").join(" | ").split(".000Z").join("") }}
-        </p>
-      </div>
-      <div v-if="mode == 'view'" class="deletePost">
-        <fa icon="trash" class="trash-icon" @click="deletePost(post)" />
-      </div>
-      <div class="post-img-box" v-if="post.imageUrl !== null">
-        <img class="imgOfPost" :src="post.imageUrl" alt="image de post" />
-      </div>
-      <div class="posts-body-text">
-        <p>{{ post.body }}</p>
-      </div>
-      <div class="posts-likes-box">
-        <div v-if="post.likes !== [] && allLikes">
-          <p class="hide-p">{{ calculateLikes(post) }}</p>
-          <p class="hide-p">{{ calculateDislikes(post) }}</p>
-          <div class="like-box">
-            <p>
-              <fa
-                icon="thumbs-up"
-                class="like-Choice"
-                @click="chooseLike(post)"
+      <div v-if="post.user.active === true">
+        <div class="posts-user-box">
+          <img class="img-profil" :src="post.user.imageUrl" alt="img-Profil" />
+          <p v-if="post.user.isAdmin === true" class="admin-post">
+            {{ post.user.name }}
+          </p>
+          <p v-else class="user-post">{{ post.user.name }}</p>
+          <p>
+            {{ post.createdAt.split("T").join(" | ").split(".000Z").join("") }}
+          </p>
+        </div>
+        <div v-if="mode == 'view'" class="deletePost">
+          <fa icon="trash" class="trash-icon" @click="deletePost(post)" />
+        </div>
+        <div class="post-img-box" v-if="post.imageUrl !== null">
+          <img class="imgOfPost" :src="post.imageUrl" alt="image de post" />
+        </div>
+        <div class="posts-body-text">
+          <p>{{ post.body }}</p>
+        </div>
+        <div></div>
+        <div class="posts-likes-box">
+          <div v-if="post.likes !== [] && allLikes">
+            <p class="hide-p">{{ calculateLikes(post) }}</p>
+            <p class="hide-p">{{ calculateDislikes(post) }}</p>
+            <div class="like-box">
+              <p>
+                <fa
+                  icon="thumbs-up"
+                  class="like-Choice"
+                  @click="chooseLike(post)"
+                />
+                {{ likes }}
+              </p>
+              <p>
+                <fa
+                  icon="thumbs-down"
+                  class="dislike-Choice"
+                  @click="chooseDislike(post)"
+                />
+                {{ dislikes }}
+              </p>
+              <p>
+                <fa
+                  @click="switchToViewComment"
+                  class="comment-view"
+                  icon="comment"
+                />
+                {{ post.comment.length }}
+              </p>
+            </div>
+            <div @click="switchToCreateComment">
+              <p>
+                <fa icon="comment" class="create-comment" />
+                commenter
+              </p>
+            </div>
+            <div class="create-comment" v-if="mode == 'comment'">
+              <textarea
+                v-model="newComment"
+                type="text"
+                placeholder="quel sera ton commentaire"
               />
-              {{ likes }}
-            </p>
-            <p>
-              <fa
-                icon="thumbs-down"
-                class="dislike-Choice"
-                @click="chooseDislike(post)"
-              />
-              {{ dislikes }}
-            </p>
+              <div class="button-create-box">
+                <button
+                  @click="createNewComment(post)"
+                  :class="{ buttonGrisePost: !validatedCommentfields }"
+                >
+                  valider
+                </button>
+                <button @click="switchToCancelComment">annuler</button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+        <div v-if="commentMode == 'comment'">
+          <div
+            v-for="comment in post.comment"
+            :key="comment.id"
+            class="comment-box"
+          >
+            <div>
+              <p>{{ comment.userName }}</p>
+              <p>
+                {{
+                  comment.createdAt
+                    .split("T")
+                    .join(" | ")
+                    .split(".000Z")
+                    .join("")
+                }}
+              </p>
+            </div>
+            <fa
+              @click="deleteComment(comment)"
+              icon="trash"
+              class="trash-icon"
+            />
+            <p>{{ comment.body }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -111,9 +171,11 @@ export default {
   data: function () {
     return {
       mode: "view",
+      commentMode: "view",
       posts: [],
       post: [],
       newPost: null,
+      newComment: null,
       newImage: null,
       allLike: [],
       allDislike: [],
@@ -186,6 +248,15 @@ export default {
         }
       }
     },
+    validatedCommentfields: function () {
+      if (this.mode == "comment") {
+        if (this.newComment != null) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    },
     ...mapGetters({ user: "getUser" }),
   },
 
@@ -198,6 +269,20 @@ export default {
     },
     switchToCancelCreatePost: function () {
       this.mode = "view";
+    },
+    switchToCreateComment: function () {
+      this.mode = "comment";
+      this.commentMode = "comment";
+    },
+    switchToCancelComment: function () {
+      this.mode = "view";
+    },
+    switchToViewComment: function () {
+      if (this.commentMode == "comment") {
+        this.commentMode = "view";
+      } else if (this.commentMode == "view") {
+        this.commentMode = "comment";
+      }
     },
     onFileChange() {
       this.newImage = this.$refs.file.files[0];
@@ -225,6 +310,38 @@ export default {
       let data = { userId: this.user.userId };
       await instance
         .delete(`/posts/${this.post.uuid}`, {
+          data,
+          headers: {
+            authorization: "Bearer " + this.user.token,
+          },
+        })
+        .then((res) => {
+          document.location.reload();
+          console.log(res);
+        })
+        .catch((err) => console.log(err));
+    },
+    createNewComment: async function (post) {
+      let data = {
+        userId: this.user.userId,
+        body: this.newComment,
+      };
+      await instance
+        .post(`comment/posts/${post.uuid}`, data, {
+          headers: {
+            authorization: "Bearer " + this.user.token,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          document.location.reload();
+        })
+        .catch((err) => console.log(err));
+    },
+    deleteComment: async function (comment) {
+      let data = { userId: this.user.userId };
+      await instance
+        .delete(`/comment/${comment.id}`, {
           data,
           headers: {
             authorization: "Bearer " + this.user.token,
@@ -388,6 +505,7 @@ body {
 
 .posts-box {
   margin: 20px;
+  padding-bottom: 1px;
   width: 350px;
   border-radius: 10px;
   background-color: gainsboro;
@@ -400,6 +518,13 @@ body {
   padding: 5px 5px 0 15px;
   margin: 0;
   font-size: 12px;
+}
+
+.admin-post {
+  color: rgb(187, 74, 74);
+  font-size: 20px;
+  font-weight: bold;
+  padding-left: 51px;
 }
 
 .user-post {
@@ -468,7 +593,7 @@ body {
 .like-Choice {
   font-size: 25px;
   padding-right: 7px;
-  margin-top: 5px;
+  margin: 5px ;
   color: blue;
   cursor: pointer;
 }
@@ -487,6 +612,25 @@ body {
 
 .dislike-Choice:hover {
   color: rgb(221, 66, 66);
+}
+
+.comment-view {
+  font-size: 25px;
+  padding-right: 7px;
+  margin-top: 5px;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+}
+
+.comment-view:hover {
+  color: rgb(165, 155, 193);
+}
+
+.comment-box {
+  margin: 10px 10px;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: grey;
 }
 
 .scroll-top {
@@ -546,7 +690,7 @@ body {
     width: 50px;
     height: 50px;
     position: fixed;
-    margin: 780px 0px 0px 610px;
+    margin: 28% 0px 0px 630px;
   }
 }
 </style>
