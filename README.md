@@ -39,3 +39,4 @@ TOKEN_SECRET='vhvvhhjfyxftftdxtdwngtdxytrvyrwyrxcv'
 
 9 : in your browser go to this link ``http://localhost:8080``
 
+10 : the first user created will always be an admin et is the only who can ban or unban others accounts
