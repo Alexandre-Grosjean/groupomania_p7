@@ -37,6 +37,6 @@ TOKEN_SECRET='vhvvhhjfyxftftdxtdwngtdxytrvyrwyrxcv'
 
 8 : in the folder ``groupomania`` launch `` npm run serve ``
 
-9 : in your browser go to this link ``http://localhost:8080``
+9 : in your browser paste this link ``http://localhost:8080``
 
 10 : the first user created will always be an admin and is the only one who can ban or unban others accounts
